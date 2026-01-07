@@ -13,6 +13,9 @@ A high-fidelity feedback loop for recipe development based on Michelin-star prin
 * **Tech**: n8n Forms, Google Gemini, Groq, Resend API.
 * **Use Case**: Solves the "why" behind cooking by providing professional feedback on flavor layering and the five basic tastes (Salty, Sweet, Sour, Bitter, Umami) to help home cooks elevate their recipes to fine-dining standards.
 
+!(workflows/food-for-thought/food for thought.png)
+
+
 ### 2. Context-Aware Weather & Gear Guide
 A reasoning-based automation that translates meteorological data into actionable daily advice.
 * **Logic**: Fetches live data from the NOAA API and utilizes an LLM to interpret weather "feel" rather than just raw temperature.
