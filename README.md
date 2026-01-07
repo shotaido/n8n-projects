@@ -12,7 +12,7 @@ An automated tutor that manages vocabulary acquisition across English, Kannada, 
 * **Agentic Pattern**: Features a dual-agent structure: a **Tutor Agent** for content generation and a **Parser Agent** to structure output for database insertion.
 * **Tech**: n8n Data Tables, Groq (GPT-OSS), JavaScript, Gmail API.
 
-[Image of n8n workflow showing AI Agent nodes and Data Table connections]
+
 
 ### 2. Context-Aware Weather & Gear Guide
 A reasoning-based automation that translates meteorological data into actionable daily advice.
@@ -26,11 +26,23 @@ A high-fidelity feedback loop for recipe development based on Michelin-star prin
 * **Architecture**: Utilizes a multi-model fallback strategy between Groq and Google Gemini to ensure high availability.
 * **Tech**: n8n Forms, Google Gemini, Groq, Resend API.
 
-[Image of a Generator-Evaluator agentic pattern diagram]
+
 
 ---
 
 ## ⚙️ Prerequisites
 
 | Workflow | System Requirements | Required Credentials |
-| :--- |
+| :--- | :--- | :--- |
+| **Polyglot** | n8n Data Table (`vocabulary_store_id`) | Groq, Gmail OAuth2 |
+| **Weather** | User-Agent Header config | Groq, Gmail OAuth2 |
+| **Culinary** | Public n8n URL (for Form submissions) | Groq, Gemini, Resend |
+
+---
+
+## 🚀 Deployment
+1. Download the `.json` files from the `/workflows` directory.
+2. In n8n, click **Import from File** to upload the canvas.
+3. Configure your respective API keys in the highlighted credential nodes.
+
+---
