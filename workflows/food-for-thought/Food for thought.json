@@ -1,0 +1,209 @@
+{
+  "name": "Food for thought - Showcase Version",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Food for thought: Recipe evaluation & improvement recommendation",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "Email",
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Recipe name",
+              "fieldLabel": "Recipe name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Recipe description",
+              "fieldLabel": "Write your recipe description here, including ingredients and steps",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Dish goal",
+              "fieldLabel": "What kind of dish do you want to make?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  { "option": "Classic, traditional" },
+                  { "option": "Modern, innovative" }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldName": "Dietary restrictions",
+              "fieldLabel": "If you have any dietary restrictions, please write them here"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [-16, 192],
+      "id": "form-trigger",
+      "name": "On form submission"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Complete",
+        "completionMessage": "=Thanks for submitting! Your response will be sent to {{ $json.Email }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.4,
+      "position": [208, 192],
+      "id": "form-response",
+      "name": "Form"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional 3 star Michelin chef teaching a student of yours. You want the student to become a better cook by applying the foundational principles of cooking.\n\nReference file: https://docs.google.com/document/d/18gi3nIOzF88p6TONWN7fwhmrC1jjC-aUdJJnngSjvPQ/edit?usp=sharing\n\nRecipe name: {{ $json['Recipe name'] }}\nRecipe description: {{ $json['Recipe description'] }}\nType of dish the chef wants to make (dish goal): {{ $json['Dish goal'] }}\nDietary restrictions, if any (blank = none): {{ $json['Dietary restrictions'] }}\n\nYour goals are the following: \n\n1. Assess the dish from these perspectives:\na) Is the dish layered? Explain your reasoning. Make sure to mention foundation, body, and finish. The details of these concepts are documented in the reference file\nb) Does the dish cover key elements of 5 basic tastes (Salty, Sweet, Sour, Bitter, Umami), in particular maximizing umami. Explain your reasoning by mentioning the basic taste element. The details of these concepts are documented in the reference file\n\n2. Suggest improvements\na) if the dish is not layered, what would you do to improve the layers\nb) if the dish does not cover key elements of taste, what would you add/subtract\nc) how would you the dish fine dining style\n\nIn your output,\n- Mention the recipe name, recipe description, dish goal, dietary restrictions first. Return the exact words that the user entered\n- don't mention things like '(Based on the foundational principles outlined in the reference document)', since this is part of an agentic workflow that is pubically accesible and I want to keep it professional.",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [432, 192],
+      "id": "ai-generator",
+      "name": "AI Agent - generate results"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [448, 416],
+      "id": "groq-model",
+      "name": "Groq Chat Model"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [576, 416],
+      "id": "gemini-fallback",
+      "name": "Google Gemini Chat Model - main"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=### Role\nYou are a rigorous Quality Assurance Auditor. Your task is to evaluate an AI-generated response against a strict rubric.\n\n### Context - Input Query\nYou are a professional 3 star Michelin chef teaching a student of yours. You want the student to become a better cook by applying the foundational principles of cooking.\n\nReference file: https://docs.google.com/document/d/18gi3nIOzF88p6TONWN7fwhmrC1jjC-aUdJJnngSjvPQ/edit?usp=sharing\n\nRecipe name: {{ $('On form submission').item.json['Recipe name'] }}\nRecipe description: {{ $('On form submission').item.json['Recipe description'] }}\n\nYour goals are the following: \n\n1. Assess the dish from these perspectives:\na) Is the dish layered? Explain your reasoning. Make sure to mention foundation, body, and finish. The details of these concepts are documented in the reference file\nb) Does the dish cover key elements of 5 basic tastes (Salty, Sweet, Sour, Bitter, Umami), in particular maximizing umami. Explain your reasoning by mentioning the basic taste element. The details of these concepts are documented in the reference file\n\n2. Suggest improvements\na) if the dish is not layered, what would you do to improve the layers\nb) if the dish does not cover key elements of taste, what would you add/subtract\nc) how would you the dish fine dining style\n\nIn your output, don't mention things like '(Based on the foundational principles outlined in the reference document)', since this is part of an agentic workflow that is pubically accesible and I want to keep it professional.\n\n\n### Context - AI response based on input query\n{{ $json.output }}\n\n### Evaluation Rubric (Additive Scoring)\nStart with a score of 0. Add points ONLY if the response meets the following binary criteria:\n\n1. [Accuracy] (+1 point): The response contains no factual hallucinations or contradictions based on the input.\n2. [Completeness] (+1 point): The response answers every specific question or sub-task mentioned in the Input Query.\n3. [Tone Alignment] (+1 point): The response matches the requested persona/tone (e.g., professional, empathetic) without being overly wordy.\n4. [Formatting] (+1 point): The response uses the requested structure (e.g., bullet points, JSON, or length limits).\n5. [No Fluff] (+1 point): The response does not include unnecessary \"As an AI...\" disclaimers or repetitive filler text.\n\n### Evaluation Steps\n1. Analyze the AI Response against each of the 5 criteria above.\n2. Provide a \"Yes/No\" for each criterion with a 1-sentence justification.\n3. Calculate the Final Score (Sum of points, 0-5).\n\n### Output Format (Strict)\nReasoning:\n- Accuracy: [Yes/No] - [Reason]\n- Completeness: [Yes/No] - [Reason]\n- Tone Alignment: [Yes/No] - [Reason]\n- Formatting: [Yes/No] - [Reason]\n- No Fluff: [Yes/No] - [Reason]\n\nFinal Score: [Sum] (out of 5)",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [784, 320],
+      "id": "ai-evaluator",
+      "name": "AI Agent - evaluate results"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [864, 544],
+      "id": "groq-eval-model",
+      "name": "Groq Chat Model1"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $('AI Agent - generate results').item.json.output }}",
+        "destinationKey": "data_results",
+        "options": { "tables": true }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [1136, 64],
+      "id": "markdown-results",
+      "name": "Markdown - results"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "destinationKey": "data_eval",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [1136, 320],
+      "id": "markdown-eval",
+      "name": "Markdown - eval"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1360, 192],
+      "id": "merge-results",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "let resultsData = $('Markdown - results').first()?.json?.data_results || \"\";\nlet evalData = $('Markdown - eval').first()?.json?.data_eval || \"\";\n\nconst tableStyle = 'style=\"border: 1px solid #333; border-collapse: collapse; width: 100%;\"';\nconst cellStyle = 'style=\"border: 1px solid #333; padding: 10px;\"';\n\nresultsData = resultsData.replace(/<table/g, `<table ${tableStyle}`).replace(/<td/g, `<td ${cellStyle}`).replace(/<th/g, `<th ${cellStyle}`);\nevalData = evalData.replace(/<table/g, `<table ${tableStyle}`).replace(/<td/g, `<td ${cellStyle}`).replace(/<th/g, `<th ${cellStyle}`);\n\nconst form = $('On form submission').first()?.json;\nreturn {\n  email: form?.Email || \"candidate@example.com\",\n  subject: `Dish evaluation report - ${form?.['Recipe name'] || 'Recipe'}`, \n  html_body: `<div class=\"results-section\">${resultsData}</div><div style=\"margin: 20px 0; font-weight: bold; border-top: 1px solid #eee;\">--- MODEL EVALUATION ---</div><div class=\"evaluation-section\">${evalData}</div>`\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1584, 192],
+      "id": "email-formatter",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_REDACTED_API_KEY" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"Showcase <no-reply@yourdomain.com>\",\n  \"to\": \"{{ $json.email }}\",\n  \"subject\": \"{{ $json.subject }}\",\n  \"html\": {{ JSON.stringify($json.html_body)}}\n}"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [1808, 192],
+      "id": "api-delivery",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "On form submission": { "main": [[{ "node": "Form", "type": "main", "index": 0 }]] },
+    "Form": { "main": [[{ "node": "AI Agent - generate results", "type": "main", "index": 0 }]] },
+    "Groq Chat Model": { "ai_languageModel": [[{ "node": "AI Agent - generate results", "type": "ai_languageModel", "index": 0 }]] },
+    "Google Gemini Chat Model - main": { "ai_languageModel": [[{ "node": "AI Agent - generate results", "type": "ai_languageModel", "index": 1 }]] },
+    "AI Agent - generate results": { 
+      "main": [
+        [{ "node": "AI Agent - evaluate results", "type": "main", "index": 0 }],
+        [{ "node": "Markdown - results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Groq Chat Model1": { "ai_languageModel": [[{ "node": "AI Agent - evaluate results", "type": "ai_languageModel", "index": 0 }]] },
+    "AI Agent - evaluate results": { "main": [[{ "node": "Markdown - eval", "type": "main", "index": 0 }]] },
+    "Markdown - results": { "main": [[{ "node": "Merge", "type": "main", "index": 0 }]] },
+    "Markdown - eval": { "main": [[{ "node": "Merge", "type": "main", "index": 1 }]] },
+    "Merge": { "main": [[{ "node": "Code in JavaScript", "type": "main", "index": 0 }]] },
+    "Code in JavaScript": { "main": [[{ "node": "HTTP Request", "type": "main", "index": 0 }]] }
+  }
+}
