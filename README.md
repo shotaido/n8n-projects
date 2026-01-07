@@ -38,10 +38,10 @@ An automated tutor that manages vocabulary acquisition across English, Kannada, 
 
 ## ⚙️ Prerequisites
 
-| Workflow | System Requirements | Required Credentials |
+| Workflow | n8n Requirements | Required Credentials |
 | :--- | :--- | :--- |
-| **Culinary** | Public n8n URL (for Form submissions) | Groq, Gemini, Resend |
-| **Weather** | User-Agent Header config | Groq, Gmail OAuth2 |
+| **Culinary** | N/A | Groq, Gemini, Resend |
+| **Weather** | N/A | Groq, Gmail OAuth2 |
 | **Polyglot** | n8n Data Table (`vocabulary_store_id`) | Groq, Gmail OAuth2 |
 
 ---
