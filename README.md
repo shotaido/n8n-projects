@@ -23,6 +23,8 @@ A reasoning-based automation that translates meteorological data into actionable
 * **Tech**: NOAA Weather API, Groq (Llama-3), n8n Markdown/HTML engine.
 * **Use Case**: Moves beyond basic weather alerts by acting as a personal stylist, analyzing hyper-local data to recommend exactly what layers to wear (e.g., "Light windbreaker over a t-shirt") for a morning commute.
 
+![Weather](workflows/weather-forecast/weather%20forecast.PNG)
+
 ### 3. Polyglot Daily: Multilingual Learning Architect
 An automated tutor that manages vocabulary acquisition across English, Kannada, Japanese, and Korean.
 * **Logic**: Interrogates an n8n Data Table to retrieve historical data, ensuring the AI does not repeat previously taught words.
@@ -30,6 +32,7 @@ An automated tutor that manages vocabulary acquisition across English, Kannada, 
 * **Tech**: n8n Data Tables, Groq (GPT-OSS), JavaScript, Gmail API.
 * **Use Case**: Accelerates retention for students learning multiple languages simultaneously by highlighting etymological links and SOV similarities while ensuring every lesson introduces unique, high-frequency "everyday" words.
 
+![Language](workflows/language-learning/language%20learning.PNG)
 
 ---
 
