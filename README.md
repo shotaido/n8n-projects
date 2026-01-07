@@ -32,7 +32,7 @@ An automated tutor that manages vocabulary acquisition across English, Kannada, 
 * **Tech**: n8n Data Tables, Groq (GPT-OSS), JavaScript, Gmail API.
 * **Use Case**: Accelerates retention for students learning multiple languages simultaneously by highlighting etymological links and SOV similarities while ensuring every lesson introduces unique, high-frequency "everyday" words.
 
-![Language](workflows/language-learning/language%20learning.PNG)
+![Language](workflows/language-learning/language%20learning%20screenshot.PNG)
 
 ---
 
