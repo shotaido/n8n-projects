@@ -13,7 +13,7 @@ A high-fidelity feedback loop for recipe development based on Michelin-star prin
 * **Tech**: n8n Forms, Google Gemini, Groq, Resend API.
 * **Use Case**: Solves the "why" behind cooking by providing professional feedback on flavor layering and the five basic tastes (Salty, Sweet, Sour, Bitter, Umami) to help home cooks elevate their recipes to fine-dining standards.
 
-![Culinary Workflow](workflows/food-for-thought/food%20for%20thought.png)
+![Culinary Workflow](workflows/food-for-thought/food%20for%20thought.PNG)
 
 
 ### 2. Context-Aware Weather & Gear Guide
